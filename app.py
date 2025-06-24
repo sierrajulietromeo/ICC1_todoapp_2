@@ -1,36 +1,22 @@
 from flask import Flask, request, render_template, redirect, url_for
-import pyodbc
+import os
+from azure.cosmos import CosmosClient, PartitionKey
 
 app = Flask(__name__)
 
-# Azure SQL connection string
-AZURE_SQL_CONN_STR = (
-    "DRIVER={ODBC Driver 18 for SQL Server};"
-    "SERVER=<your_server>.database.windows.net;"
-    "DATABASE=<your_database>;"
-    "UID=<your_username>;"
-    "PWD=<your_password>;"
-    "Encrypt=yes;"
-    "TrustServerCertificate=no;"
-    "Connection Timeout=30;"
+# Cosmos DB config (set these as environment variables for security)
+COSMOS_ENDPOINT = os.environ.get('COSMOS_ENDPOINT')
+COSMOS_KEY = os.environ.get('COSMOS_KEY')
+COSMOS_DB = 'ICC1db'
+COSMOS_CONTAINER = 'tasks'
+
+# Initialize Cosmos client and container
+client = CosmosClient(COSMOS_ENDPOINT, COSMOS_KEY)
+database = client.create_database_if_not_exists(id=COSMOS_DB)
+container = database.create_container_if_not_exists(
+    id=COSMOS_CONTAINER,
+    partition_key=PartitionKey(path="/id")
 )
-
-# Initialise the database
-def init_db():
-    conn = pyodbc.connect(AZURE_SQL_CONN_STR)
-    cur = conn.cursor()
-    cur.execute('''
-        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='tasks' AND xtype='U')
-        CREATE TABLE tasks (
-            id INT IDENTITY(1,1) PRIMARY KEY, 
-            task NVARCHAR(255) NOT NULL,
-            priority INT DEFAULT 1
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-init_db()
 
 @app.route('/')
 def home():
@@ -38,32 +24,26 @@ def home():
 
 @app.route('/tasks')
 def tasks():
-    conn = pyodbc.connect(AZURE_SQL_CONN_STR)
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM tasks ORDER BY priority ASC')
-    tasks = cur.fetchall()
-    conn.close()
+    tasks = list(container.read_all_items())
+    tasks.sort(key=lambda x: x.get('priority', 1))
     return render_template('tasks.html', tasks=tasks)
 
 @app.route('/add', methods=['POST'])
 def add_task():
     new_task = request.form.get('task')
-    priority = request.form.get('priority')
-    conn = pyodbc.connect(AZURE_SQL_CONN_STR)
-    cur = conn.cursor()
-    cur.execute('INSERT INTO tasks (task, priority) VALUES (?, ?)', (new_task, priority))
-    conn.commit()
-    conn.close()
+    priority = int(request.form.get('priority', 1))
+    task_doc = {
+        'id': str(hash(new_task + str(priority))),
+        'task': new_task,
+        'priority': priority
+    }
+    container.upsert_item(task_doc)
     return redirect(url_for('tasks'))
 
-@app.route('/delete/<int:task_id>', methods=['POST'])
+@app.route('/delete/<task_id>', methods=['POST'])
 def delete_task(task_id):
-    conn = pyodbc.connect(AZURE_SQL_CONN_STR)
-    cur = conn.cursor()
-    cur.execute('DELETE FROM tasks WHERE id = ?', (task_id,))
-    conn.commit()
-    conn.close()
+    container.delete_item(item=task_id, partition_key=task_id)
     return redirect(url_for('tasks'))
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=80)
+    app.run(debug=True, host='0.0.0.0', port=5000)
