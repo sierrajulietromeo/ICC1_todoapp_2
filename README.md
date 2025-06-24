@@ -3,8 +3,10 @@
 ## Purpose
 
 This repository is meant to be used as a basis for the ICC1 module at Ada.
-This is the first task for the part of learning for the capstone project.
+This is the second task for the part of learning for the capstone project.
 Learners will deploy this in a virtual machine on a Cloud Provider such as AWS, Azure, or GCP. 
+
+However, the database aspect has been separated, and is now stored as a managed database instance in the cloud.
 
 A simple Flask-based To-Do application that lets you manage tasks with priorities.
 
@@ -44,7 +46,6 @@ sudo python3 app.py
 ## Project Structure
 
 - `app.py` — Main Flask application
-- `todo.db` — SQLite database (created automatically)
 - `templates/` — HTML templates
 
 ## License
