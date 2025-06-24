@@ -17,17 +17,17 @@
     </form>
     <ul>
         <ul>
-            {% for id, task, priority in tasks %}
+            {% for task in tasks %}
                 <li>
-                    {{ task }} - Priority: 
-                    {% if priority == 1 %}
-                        Low
-                    {% elif priority == 2 %}
-                        Medium
-                    {% else %}
-                        High
-                    {% endif %}
-                    <form action="{{ url_for('delete_task', task_id=id) }}" method="post" style="display: inline;">
+                {{ task['task'] }} - Priority: 
+                {% if task['priority'] == 1 %}
+                    Low
+                {% elif task['priority'] == 2 %}
+                    Medium
+                {% else %}
+                    High
+                {% endif %}
+                    <form action="{{ url_for('delete_task', task_id=task['id']) }}" method="post" style="display: inline;">
                         <input type="submit" value="Delete">
                     </form>
                 </li>
