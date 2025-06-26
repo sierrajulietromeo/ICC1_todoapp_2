@@ -1,4 +1,4 @@
-# ICC1_todoapp
+# ICC1_todoapp_2
 
 ## Purpose
 
@@ -6,7 +6,7 @@ This repository is meant to be used as a basis for the ICC1 module at Ada.
 This is the second task for the part of learning for the capstone project.
 Learners will deploy this in a virtual machine on a Cloud Provider such as AWS, Azure, or GCP. 
 
-However, the database aspect has been separated, and is now stored as a managed database instance in the cloud.
+However, the database aspect has been separated, and is now stored in a serverless Azure Cosmos DB
 
 A simple Flask-based To-Do application that lets you manage tasks with priorities.
 
@@ -14,34 +14,19 @@ A simple Flask-based To-Do application that lets you manage tasks with prioritie
 
 - Add, view, and delete tasks
 - Tasks have priorities (lower number = higher priority)
-- Data stored in a local SQLite database
+- Data stored in an Azure Cosmos DB
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.x
+- Python 3.12+
 - Flask
+- azure-cosmos library  (pip install azure-cosmos)
 
-### Installation
+### Installation and Running 
 
-1. Clone this repository:
-    ```sh
-    git clone <repo-url>
-    cd ICC1_todoapp
-    ```
-2. Install dependencies:
-    ```sh
-    pip install flask
-    ```
-
-### Running the App
-
-**Note:** Running on port 80 may require root privileges.
-
-```sh
-sudo python3 app.py
-```
+See the Tango Guide **[https://app.tango.us/app/workflow/Separating-the-database-from-the-compute---Creating-an-Azure-Cosmos-DB-Serverless-Instance-40067ef85d34476180b76ebea589c2a3](https://eff.org)**
 
 ## Project Structure
 
