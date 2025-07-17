@@ -26,7 +26,9 @@ A simple Flask-based To-Do application that lets you manage tasks with prioritie
 
 ### Installation and Running 
 
-See the Tango Guide **[here](https://app.tango.us/app/workflow/Separating-the-database-from-the-compute---Creating-an-Azure-Cosmos-DB-Serverless-Instance-40067ef85d34476180b76ebea589c2a3)**
+Azure: See the Tango Guide **[here](https://app.tango.us/app/workflow/Separating-the-database-from-the-compute---Creating-an-Azure-Cosmos-DB-Serverless-Instance-40067ef85d34476180b76ebea589c2a3)**
+AWS: **[here](https://app.tango.us/app/workflow/Launch-and-Configure-an-EC2-Monolithic-ToDo-App-on-AWS--IaaS--6818e7d54be2406cb9e9bc695784c313)**
+
 
 ## Project Structure
 
